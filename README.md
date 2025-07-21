@@ -1,26 +1,22 @@
-# DevConnect
+# DevConnect - User Authentication System
 
-A simple Node.js + Express authentication backend with MongoDB and JWT.
+This is a simple full-stack application for user registration and login, built using:
+
+- Frontend: React
+- Backend: Node.js, Express.js
+- Database: MongoDB
 
 ## Features
 
-- User registration
-- Login with JWT
-- Protected profile route
-- JWT middleware
-- MongoDB integration
+- User registration with hashed passwords
+- Secure login with JWT token
+- Connected to MongoDB
+- Built for learning DevOps CI/CD with Jenkins & GitHub Actions
 
 ## Getting Started
 
-1. Clone the repo
-2. Run `npm install`
-3. Create a `.env` file from `.env.example`
-4. Run `npm run dev` to start in dev mode
-5. Run `npm test` to test
-
-## Tech Stack
-
-- Node.js
-- Express
-- MongoDB + Mongoose
-- JWT for authentication
+### Backend
+```bash
+cd backend
+npm install
+npm start

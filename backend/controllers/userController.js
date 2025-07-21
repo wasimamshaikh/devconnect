@@ -1,45 +1,47 @@
 // controllers/userController.js
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// @desc    Register user
+// @desc    Register user (NO HASHING)
 exports.registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ msg: 'User already exists' });
+    const userExists = await User.findOne({ email });
+    if (userExists) return res.status(400).json({ msg: 'User already exists' });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Save password directly without hashing
+    const user = await User.create({ name, email, password });
 
-    user = new User({ name, email, password: hashedPassword });
-    await user.save();
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-
-    res.status(201).json({
-      token,
-      user: { id: user._id, name: user.name, email: user.email },
-    });
-
+    res.status(201).json({ msg: "Registration successful!" });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
   }
 };
 
-// @desc    Login user
+// @desc    Login user (NO HASHING)
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
+    console.log("Login request received:", { email, password });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+    const user = await User.findOne({ email });
+    console.log("User found in DB:", user);
+
+    if (!user) {
+      console.log("No user found for email.");
+      return res.status(400).json({ msg: 'Invalid credentials' });
+    }
+
+    // Direct comparison without bcrypt
+    if (user.password !== password) {
+      console.log("Plain password does not match");
+      return res.status(400).json({ msg: 'Invalid credentials' });
+    }
+
+    console.log("Plain password matched");
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
@@ -49,19 +51,7 @@ exports.loginUser = async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err.message);
+    console.error("Server error during login:", err.message);
     res.status(500).send("Server Error");
-  }
-};
-
-// @desc    Get profile
-exports.getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user).select('-password');
-    if (!user) return res.status(404).json({ msg: 'User not found' });
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
   }
 };
