@@ -20,3 +20,8 @@ This is a simple full-stack application for user registration and login, built u
 cd backend
 npm install
 npm start
+
+### Frontend
+cd frontend
+npm install
+npm run dev
