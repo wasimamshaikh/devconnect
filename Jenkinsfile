@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        MONGO_URI = 'mongodb://34.224.212.141:27017/devconnect'
+        NODE_ENV = 'test'
+    }
+
     stages {
         stage ('Install Dependencies') {
             steps {
