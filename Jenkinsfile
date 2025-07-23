@@ -14,5 +14,10 @@ pipeline {
                 sh 'npm test || echo "No tests defined"'
             }
         }
+        stage ('Build') {
+            steps {
+                sh 'npm run build || echo "No build step defined"'
+            }
+        }
     }
 }
